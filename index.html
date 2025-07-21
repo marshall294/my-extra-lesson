@@ -12,15 +12,17 @@
   <div class="container">
     <h2>Year 5 Mathematics Assessment</h2>
     <label for="studentName">Student Name:</label>
-    <input type="text" id="studentName" required /><br><br>
+    <input type="text" id="studentName" required />
+    <br><br>
 
     <form id="quizForm">
       <div id="questionsContainer"></div>
       <button type="submit">Submit</button>
     </form>
 
-    <div id="result" style="display:none;"></div>
+    <div id="result" style="display:none; margin-top:20px;"></div>
   </div>
+
 
   <script>
     const questions = [
@@ -195,15 +197,28 @@
       if (!name) return alert("Please enter your name.");
 
       let score = 0;
+      const answers = [];
+
       questions.forEach((q, i) => {
         const ans = document.querySelector(`input[name="q${i}"]:checked`);
-        if (ans && ans.value === q.answer) score++;
+        const selected = ans ? ans.value : "No Answer";
+        if (selected === q.answer) score++;
+        answers.push({
+          question: q.question,
+          selected: selected,
+          correct: q.answer
+        });
       });
 
       document.getElementById("result").style.display = "block";
       document.getElementById("result").innerHTML = `<h3>${name}, your score is: ${score} / ${questions.length}</h3>`;
 
-      await db.collection("assessments").add({ name, score, timestamp: new Date() });
+      await db.collection("assessments").add({
+        name,
+        score,
+        timestamp: new Date(),
+        answers
+      });
     });
   </script>
 </body>
