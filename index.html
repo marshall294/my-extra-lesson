@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Year 5 Maths Assessment</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="firebase-config.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h2>Year 5 Mathematics Assessment</h2>
+    <label for="studentName">Student Name:</label>
+    <input type="text" id="studentName" required /><br><br>
+
+    <form id="quizForm">
+      <div id="questionsContainer"></div>
+      <button type="submit">Submit</button>
+    </form>
+
+    <div id="result" style="display:none;"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What is the value of 5 × (6 + 4)?",
+        options: ["30", "50", "60", "20"],
+        answer: "50"
+      },
+      {
+        question: "If a rectangle has a length of 12 cm and width of 5 cm, what is its area?",
+        options: ["60 cm²", "24 cm²", "30 cm²", "70 cm²"],
+        answer: "60 cm²"
+      },
+      {
+        question: "What is the missing number in the pattern: 3, 6, 12, __, 48?",
+        options: ["20", "18", "24", "30"],
+        answer: "24"
+      },
+      {
+        question: "Which of these numbers is a multiple of both 3 and 4?",
+        options: ["9", "12", "15", "18"],
+        answer: "12"
+      },
+      {
+        question: "Which fraction is equal to 0.5?",
+        options: ["1/2", "1/3", "2/3", "2/4"],
+        answer: "1/2"
+      },
+{
+  question: "What is 3/4 of 20?",
+  options: ["15", "12", "10", "13"],
+  answer: "15"
+},
+{
+  question: "If a bag contains 4 red balls, 3 blue balls and 3 green balls, what fraction of the balls are red?",
+  options: ["4/10", "4/8", "4/9", "3/10"],
+  answer: "4/10"
+},
+{
+  question: "Round 78.49 to the nearest whole number.",
+  options: ["78", "79", "77", "80"],
+  answer: "78"
+},
+{
+  question: "Which of the following is equivalent to 2/3?",
+  options: ["4/6", "3/5", "5/7", "6/9"],
+  answer: "4/6"
+},
+{
+  question: "A pizza was divided into 8 slices. John ate 3. What fraction is left?",
+  options: ["5/8", "3/8", "1/2", "6/8"],
+  answer: "5/8"
+},
+{
+  question: "A clock shows 3:15. What is the angle between the hour and minute hand?",
+  options: ["7.5°", "90°", "60°", "45°"],
+  answer: "7.5°"
+},
+{
+  question: "What is the perimeter of a rectangle with length 10 cm and width 4 cm?",
+  options: ["28 cm", "40 cm", "14 cm", "20 cm"],
+  answer: "28 cm"
+},
+{
+  question: "Which shape has exactly one pair of parallel lines?",
+  options: ["Trapezium", "Square", "Rectangle", "Rhombus"],
+  answer: "Trapezium"
+},
+{
+  question: "What is the volume of a cuboid with l = 5cm, w = 3cm, h = 2cm?",
+  options: ["30 cm³", "10 cm³", "15 cm³", "60 cm³"],
+  answer: "30 cm³"
+},
+{
+  question: "If 3 pens cost ₦60, what is the cost of 5 pens?",
+  options: ["₦100", "₦90", "₦80", "₦75"],
+  answer: "₦100"
+},
+{
+  question: "What is the next number in the pattern: 2, 5, 10, 17, __?",
+  options: ["24", "26", "28", "30"],
+  answer: "26"
+},
+{
+  question: "Multiply 0.5 × 0.2",
+  options: ["0.1", "0.02", "0.01", "1.0"],
+  answer: "0.1"
+},
+{
+  question: "A box contains 120 apples. If 1/4 of them are bad, how many are good?",
+  options: ["90", "60", "30", "100"],
+  answer: "90"
+},
+{
+  question: "Which of these angles is acute?",
+  options: ["45°", "90°", "120°", "180°"],
+  answer: "45°"
+},
+{
+  question: "What is the mode in the set: 2, 5, 3, 5, 7, 5, 2?",
+  options: ["2", "5", "3", "7"],
+  answer: "5"
+},
+{
+  question: "How many lines of symmetry does a regular hexagon have?",
+  options: ["6", "4", "3", "5"],
+  answer: "6"
+},
+{
+  question: "Which of the following numbers is divisible by both 2 and 3?",
+  options: ["12", "9", "10", "15"],
+  answer: "12"
+},
+{
+  question: "Which operation would you do first in 6 + 3 × 2?",
+  options: ["Addition", "Multiplication", "Subtraction", "Division"],
+  answer: "Multiplication"
+},
+{
+  question: "What is 25% of 200?",
+  options: ["50", "25", "100", "75"],
+  answer: "50"
+},
+{
+  question: "Convert 3.75 to a fraction.",
+  options: ["15/4", "7/4", "3/4", "4/3"],
+  answer: "15/4"
+},
+{
+  question: "How many faces does a triangular prism have?",
+  options: ["5", "6", "7", "4"],
+  answer: "5"
+},
+{
+  question: "What time is 45 minutes after 2:15?",
+  options: ["3:00", "2:45", "3:15", "2:30"],
+  answer: "3:00"
+},
+{
+  question: "What is the average of 6, 8, 10, 12?",
+  options: ["9", "10", "8", "11"],
+  answer: "9"
+},
+{
+  question: "Which number makes this sentence true: 14 ÷ ___ = 2",
+  options: ["7", "2", "4", "6"],
+  answer: "7"
+},
+{
+  question: "A triangle has angles 50° and 60°. What is the third angle?",
+  options: ["70°", "60°", "90°", "80°"],
+  answer: "70°"
+}
+
+    ];
+
+    const container = document.getElementById("questionsContainer");
+    questions.forEach((q, index) => {
+      const div = document.createElement("div");
+      div.innerHTML = `
+        <p><b>Q${index + 1}:</b> ${q.question}</p>
+        ${q.options.map(opt => `
+          <label><input type="radio" name="q${index}" value="${opt}" required> ${opt}</label><br>
+        `).join("")}
+        <br>`;
+      container.appendChild(div);
+    });
+
+    document.getElementById("quizForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const name = document.getElementById("studentName").value.trim();
+      if (!name) return alert("Please enter your name.");
+
+      let score = 0;
+      questions.forEach((q, i) => {
+        const ans = document.querySelector(`input[name="q${i}"]:checked`);
+        if (ans && ans.value === q.answer) score++;
+      });
+
+      document.getElementById("result").style.display = "block";
+      document.getElementById("result").innerHTML = `<h3>${name}, your score is: ${score} / ${questions.length}</h3>`;
+
+      await db.collection("assessments").add({ name, score, timestamp: new Date() });
+    });
+  </script>
+</body>
+</html>
