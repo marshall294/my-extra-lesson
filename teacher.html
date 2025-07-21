@@ -13,14 +13,21 @@
     <h2>Year 5 Maths Assessment Results</h2>
     <table border="1">
       <thead>
-        <tr><th>Name</th><th>Score</th><th>Submitted</th></tr>
+        <tr><th>Name</th><th>Score</th><th>Submitted</th><th>Script</th></tr>
       </thead>
       <tbody id="resultsBody"></tbody>
     </table>
+
+    <div id="scriptView" style="display:none; margin-top: 30px;">
+      <h3>Student Script</h3>
+      <div id="scriptContent"></div>
+    </div>
   </div>
 
   <script>
     const tbody = document.getElementById("resultsBody");
+    const scriptView = document.getElementById("scriptView");
+    const scriptContent = document.getElementById("scriptContent");
 
     db.collection("assessments")
       .orderBy("score", "desc")
@@ -28,14 +35,39 @@
       .then(snapshot => {
         snapshot.forEach(doc => {
           const data = doc.data();
-          const row = `<tr>
+          const answersData = JSON.stringify(data.answers || []);
+          const row = document.createElement("tr");
+          row.innerHTML = `
             <td>${data.name}</td>
             <td>${data.score}</td>
             <td>${new Date(data.timestamp.toDate()).toLocaleString()}</td>
-          </tr>`;
-          tbody.innerHTML += row;
+            <td><button onclick='showScript(${JSON.stringify(answersData)})'>View</button></td>
+          `;
+          tbody.appendChild(row);
         });
       });
+
+    function showScript(answersJSON) {
+      const answers = JSON.parse(answersJSON);
+      let html = `<table border="1" width="100%">
+        <thead>
+          <tr><th>#</th><th>Question</th><th>Student's Answer</th><th>Correct Answer</th><th>Result</th></tr>
+        </thead><tbody>`;
+      answers.forEach((item, i) => {
+        const correct = item.selected === item.correct;
+        html += `<tr>
+          <td>${i + 1}</td>
+          <td>${item.question}</td>
+          <td>${item.selected}</td>
+          <td>${item.correct}</td>
+          <td style="color:${correct ? 'green' : 'red'}">${correct ? '✔️' : '❌'}</td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+      scriptContent.innerHTML = html;
+      scriptView.style.display = "block";
+      window.scrollTo(0, document.body.scrollHeight);
+    }
   </script>
 </body>
 </html>
