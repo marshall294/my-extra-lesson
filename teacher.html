@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Teacher Scores</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="firebase-config.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h2>Year 5 Maths Assessment Results</h2>
+    <table border="1">
+      <thead>
+        <tr><th>Name</th><th>Score</th><th>Submitted</th></tr>
+      </thead>
+      <tbody id="resultsBody"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const tbody = document.getElementById("resultsBody");
+
+    db.collection("assessments")
+      .orderBy("score", "desc")
+      .get()
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const row = `<tr>
+            <td>${data.name}</td>
+            <td>${data.score}</td>
+            <td>${new Date(data.timestamp.toDate()).toLocaleString()}</td>
+          </tr>`;
+          tbody.innerHTML += row;
+        });
+      });
+  </script>
+</body>
+</html>
